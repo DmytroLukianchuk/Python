@@ -9,7 +9,7 @@ user_input = str(input("Enter any number from 20 till 99 to know how it spells: 
 
 user_num_one, user_num_two = user_input
 
-while user_num_one == "1":
+while user_num_one == '0' or user_num_one == '1':
     user_input = str(input("First entered number was 1. Enter any number from 20 till 99 to know how it spells: "))
     user_num_one, user_num_two = user_input
 
