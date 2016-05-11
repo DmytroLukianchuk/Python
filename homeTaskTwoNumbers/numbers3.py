@@ -42,6 +42,3 @@ if 10 < lastTwo < 20:
     print(spell_hundred_num + dict_bad[lastTwo])
 else:
     print("Spelling of entered number is: " + spell_hundred_num + dozen_num + " " + units_num)
-
-
-
