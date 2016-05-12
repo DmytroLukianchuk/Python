@@ -4,7 +4,8 @@ CHOOSE_ONE = "Scissors (SC), Stone (ST), Paper (P): "
 user_won_round = "User Won This Round"
 machine_won_round = "Machine Won This Round"
 draw = "Draw in This Round"
-dict_values = {1: "SI", 2: "ST", 3: "P"}
+dict_values = {1: "SC", 2: "ST", 3: "P"}
+dict_values_long = {1: "SCISSORS", 2: "STONE", 3: "PAPER"}
 
 user_score = 0
 machine_score = 0
@@ -14,19 +15,14 @@ game_round = 1
 def who_won(machine_selection, user_selection):
     if machine_selection == 1 and user_selection == 2:
         return user_won_round
-
     elif machine_selection == 1 and user_selection == 3:
         return machine_won_round
-
     elif machine_selection == 3 and user_selection == 1:
         return user_won_round
-
     elif machine_selection == 2 and user_selection == 1:
         return machine_won_round
-
     elif machine_selection == 3 and user_selection == 1:
         return user_won_round
-
     elif machine_selection == 2 and user_selection == 3:
         return user_won_round
     else:
@@ -82,8 +78,8 @@ while end_of_game != machine_score or end_of_game != user_score:
     machine_select = machine_selection()
     user_selection = ask_user()
 
-    print("Machine selected:", dict_values[machine_select])
-    print("You selected:", dict_values[user_selection])
+    print("Machine selected:", dict_values_long[machine_select])
+    print("You selected:", dict_values_long[user_selection])
 
     winner = who_won(machine_select, user_selection)
     print(winner)
