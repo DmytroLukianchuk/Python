@@ -1,6 +1,6 @@
 import random
 
-CHOOSE_ONE = "scissors (SI), Stone (ST), Paper (P): "
+CHOOSE_ONE = "Scissors (SC), Stone (ST), Paper (P): "
 user_won_round = "User Won This Round"
 machine_won_round = "Machine Won This Round"
 draw = "Draw in This Round"
@@ -8,10 +8,7 @@ dict_values = {1: "SI", 2: "ST", 3: "P"}
 
 user_score = 0
 machine_score = 0
-
 game_round = 1
-
-# end_of_game = 3
 
 
 def who_won(machine_selection, user_selection):
@@ -98,5 +95,3 @@ while end_of_game != machine_score or end_of_game != user_score:
     if machine_score == end_of_game or user_score == end_of_game:
         print("Game Over, baby!", winner)
         break
-
-
