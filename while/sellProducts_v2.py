@@ -26,5 +26,5 @@ for product in dict_prodcuts:
 #     products_str += prod + ", "
 # print(products_str[:-2])
 
-print("So, you've bought :", ", ".join(dict_prodcuts.values()))
+print("So, you've bought :", " / ".join(dict_prodcuts.values()))
 
