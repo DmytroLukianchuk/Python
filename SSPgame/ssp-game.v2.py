@@ -6,6 +6,7 @@ machine_won_round = "Machine Won This Round"
 draw = "Draw in This Round"
 dict_values = {1: "SC", 2: "ST", 3: "P"}
 dict_values_long = {1: "SCISSORS", 2: "STONE", 3: "PAPER"}
+dict_win_comb = {"SCISSORS": "PAPER", "STONE": "SCISSORS", "PAPER": "STONE"}
 
 user_score = 0
 machine_score = 0
@@ -13,21 +14,12 @@ game_round = 1
 
 
 def who_won(machine_selection, user_selection):
-    if machine_selection == 1 and user_selection == 2:
-        return user_won_round
-    elif machine_selection == 1 and user_selection == 3:
-        return machine_won_round
-    elif machine_selection == 3 and user_selection == 2:
-        return machine_selection
-    elif machine_selection == 2 and user_selection == 1:
-        return machine_won_round
-    elif machine_selection == 3 and user_selection == 1:
-        return user_won_round
-    elif machine_selection == 2 and user_selection == 3:
-        return user_won_round
-    else:
+    if machine_selection == user_selection:
         return draw
-
+    elif dict_win_comb[dict_values_long[machine_selection]] == dict_values_long[user_selection]:
+        return machine_won_round
+    else:
+        return user_won_round
 
 def ask_user():
     user_entered = input(CHOOSE_ONE).upper()
@@ -68,7 +60,10 @@ def print_results():
 def print_round():
     print("ROUND", game_round)
 
-end_of_game = int(input("Enter End Of Game Score from 1 till 5: "))
+end_of_game = input("Enter End Of Game Score from 1 till 5: ")
+while not end_of_game.isdigit():
+    end_of_game = input("You entered not a number. Enter End Of Game Score from 1 till 5: ")
+end_of_game = int(end_of_game)
 print("Let the Game Begin")
 print()
 
@@ -76,12 +71,12 @@ while end_of_game != machine_score or end_of_game != user_score:
     print_round()
 
     machine_select = machine_selection()
-    user_selection = ask_user()
+    user_select = ask_user()
 
     print("Machine selected:", dict_values_long[machine_select])
-    print("You selected:", dict_values_long[user_selection])
+    print("You selected:", dict_values_long[user_select])
 
-    winner = who_won(machine_select, user_selection)
+    winner = who_won(machine_select, user_select)
     print(winner)
 
     update_score()
@@ -89,5 +84,5 @@ while end_of_game != machine_score or end_of_game != user_score:
     print("********************")
 
     if machine_score == end_of_game or user_score == end_of_game:
-        print("Game Over, baby!", winner)
+        print("Game Over, baby!", winner, "from", game_round - 1, "attempt")
         break
