@@ -21,6 +21,7 @@ def who_won(machine_selection, user_selection):
     else:
         return user_won_round
 
+
 def ask_user():
     user_entered = input(CHOOSE_ONE).upper()
     while user_entered not in dict_values.values():
