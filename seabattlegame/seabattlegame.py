@@ -40,7 +40,12 @@ def print_field_for_user(f):
 
 def user_set(f, sign):
     column = input("Enter a COLUMN (A, B or C): ").upper()
-    row = int(input("Enter a ROW (1, 2 or 3): "))
+    while not column in ("A", "B", "C"):
+        column = input("Enter a COLUMN (A, B or C): ").upper()
+    row = input("Enter a ROW (1, 2 or 3): ")
+    while not (row in ('1', '2', '3') and row.isnumeric()):
+        row = input("Enter a ROW (1, 2 or 3): ")
+    row = int(row)
     print()
 
     if column == 'A':
