@@ -1,5 +1,6 @@
 __author__ = 'dmytrol'
 import random
+import re
 
 BOAT_SIGN = '#'
 MILK_SIGN = 'O'
@@ -17,25 +18,14 @@ def field_gen():
     return field
 
 
-def print_field(f):
+def print_field(f, boat_hidden):
     line = ' | '
     for row in f:
-        print(line.join(row), "|")
+        line_join = line.join(row)
+        if BOAT_SIGN in line_join and boat_hidden:
+            line_join = re.sub(BOAT_SIGN, ' ', line_join)
+        print(line_join, "|")
         print('*' * 15)
-
-
-def print_field_for_user(f):
-    line = ' | '
-    for i in range(len(f)):
-        for j in range(len(f)):
-            if f[i][j] == BOAT_SIGN:
-                f[i][j] = " "
-
-    for row in f:
-        print(line.join(row), "|")
-        print('*' * 15)
-
-    return f
 
 
 def user_set(f, sign):
@@ -65,8 +55,12 @@ def user_set(f, sign):
             while f[row][item] == sign * 2:
                 f[row][item] = sign
                 print("You've chosen already occupied spot! NOT GOOD!")
-                column = input("Enter a COLUMN (A, B or C): ").upper()
-                row = int(input("Enter a ROW (1, 2 or 3): "))
+                while not column in ("A", "B", "C"):
+                    column = input("Enter a COLUMN (A, B or C): ").upper()
+                    row = input("Enter a ROW (1, 2 or 3): ")
+                while not (row in ('1', '2', '3') and row.isnumeric()):
+                    row = input("Enter a ROW (1, 2 or 3): ")
+                row = int(row)
                 print()
 
                 if column == 'A':
@@ -84,13 +78,29 @@ def user_set(f, sign):
 
 
 def machine_set(f, sign):
-    machine_column = random.randint(1, 3)
     machine_row = random.randint(1, 3)
+    machine_column = random.randint(1, 3)
 
-    if f[machine_row][machine_column] == " ":
-        f[machine_row][machine_column] = sign
-    else:
-        f[machine_row][machine_column] += sign
+    while f[machine_row][machine_column] == MILK_SIGN:
+        machine_row = random.randint(1, 3)
+        machine_column = random.randint(1, 3)
+
+    if f[machine_row][machine_column] == BOAT_SIGN:
+        f[machine_row][machine_column] = HIT_SIGN
+
+        if machine_column == 1:
+            machine_column = 'A'
+        elif machine_column == 2:
+            machine_column = 'B'
+        elif machine_column == 3:
+            machine_column = 'C'
+
+        print("Machine has chosen: " + machine_column + str(machine_row))
+        print("BOOM! Machine has won!!!")
+        print_field(f, False)
+        exit()
+
+    f[machine_row][machine_column] = sign
 
     if machine_column == 1:
         machine_column = 'A'
@@ -102,26 +112,6 @@ def machine_set(f, sign):
     if not sign == BOAT_SIGN:
         print("Machine has chosen: " + machine_column + str(machine_row))
 
-    for row in range(len(f)):
-        for item in range(len(f)):
-            while f[row][item] == sign * 2:
-                f[row][item] = sign
-                print("Machine has chosen already occupied spot! NOT GOOD!. Trying again...")
-                machine_column = random.randint(1, 3)
-                machine_row = random.randint(1, 3)
-
-                if f[machine_row][machine_column] == " ":
-                    f[machine_row][machine_column] = sign
-                else:
-                    f[machine_row][machine_column] += sign
-
-                if machine_column == 1:
-                    machine_column = 'A'
-                elif machine_column == 2:
-                    machine_column = 'B'
-                elif machine_column == 3:
-                    machine_column = 'C'
-                print("Machine has chosen: " + machine_column + str(machine_row))
     return f
 
 
@@ -131,7 +121,8 @@ def is_hit(f, player):
             if f[row][item] == BOAT_SIGN + MILK_SIGN:
                 f[row][item] = HIT_SIGN
                 print("BOOM!", player, "has hit")
-                print_field_for_user(f)
+                # print_field(f, True)
+                print_field(f, False)
                 quit()
             if f[row][item] == MILK_SIGN * 2:
                 f[row][item] = MILK_SIGN
@@ -147,12 +138,12 @@ def game_turn(player, f_player):
 
 print("User's field: ")
 f_user = field_gen()
-print_field(f_user)
+print_field(f_user, False)
 print()
 
 print("Set up a boat: ")
 user_set(f_user, BOAT_SIGN)
-print_field(f_user)
+print_field(f_user, False)
 print()
 
 print("Machine has set up the boat. Try to guess where it is! :) ")
@@ -169,7 +160,8 @@ while True:
 
     if not is_hit(f_machine, PLAYER_USER):
         print("MILK! Machine's field")
-        print_field_for_user(f_machine)
+        # print_field(f_machine, True)
+        print_field(f_machine, False)
 
     print()
     print("Enemy shoots you: ")
@@ -179,4 +171,4 @@ while True:
     if not is_hit(f_user, PLAYER_MACHINE):
         print()
         print("MILK! Your field")
-        print_field(f_user)
+        print_field(f_user, False)
