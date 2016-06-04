@@ -28,60 +28,20 @@ def print_field(f, boat_hidden):
         print('*' * 15)
 
 
-def user_set(f, sign):
-    column = input("Enter a COLUMN (A, B or C): ").upper()
-    while not column in ("A", "B", "C"):
-        column = input("Enter a COLUMN (A, B or C): ").upper()
-    row = input("Enter a ROW (1, 2 or 3): ")
-    while not (row in ('1', '2', '3') and row.isnumeric()):
-        row = input("Enter a ROW (1, 2 or 3): ")
-    row = int(row)
-    print()
-
-    if column == 'A':
-        column = 1
-    elif column == 'B':
-        column = 2
-    elif column == "C":
-        column = 3
-
-    if f[row][column] == " ":
-        f[row][column] = sign
-    else:
-        f[row][column] += sign
-
-    for row in range(len(f)):
-        for item in range(len(f)):
-            while f[row][item] == sign * 2:
-                f[row][item] = sign
-                print("You've chosen already occupied spot! NOT GOOD!")
-                while not column in ("A", "B", "C"):
-                    column = input("Enter a COLUMN (A, B or C): ").upper()
-                    row = input("Enter a ROW (1, 2 or 3): ")
-                while not (row in ('1', '2', '3') and row.isnumeric()):
-                    row = input("Enter a ROW (1, 2 or 3): ")
-                row = int(row)
-                print()
-
-                if column == 'A':
-                    column = 1
-                elif column == 'B':
-                    column = 2
-                elif column == "C":
-                    column = 3
-
-                if f[row][column] == " ":
-                    f[row][column] = sign
-                else:
-                    f[row][column] += sign
-    return f
-
-
 def machine_set(f, sign):
     machine_row = random.randint(1, 3)
     machine_column = random.randint(1, 3)
 
     while f[machine_row][machine_column] == MILK_SIGN:
+        if machine_column == 1:
+            machine_column = 'A'
+        elif machine_column == 2:
+            machine_column = 'B'
+        elif machine_column == 3:
+            machine_column = 'C'
+        print("Machine has chosen: " + machine_column + str(machine_row))
+        print("ALERT! OCCUPIED SPOT! NOT GOOD! TRY AGAIN!")
+        print()
         machine_row = random.randint(1, 3)
         machine_column = random.randint(1, 3)
 
@@ -115,26 +75,70 @@ def machine_set(f, sign):
     return f
 
 
-def is_hit(f, player):
-    for row in range(len(f)):
-        for item in range(len(f)):
-            if f[row][item] == BOAT_SIGN + MILK_SIGN:
-                f[row][item] = HIT_SIGN
-                print("BOOM!", player, "has hit")
-                # print_field(f, True)
-                print_field(f, False)
-                quit()
-            if f[row][item] == MILK_SIGN * 2:
-                f[row][item] = MILK_SIGN
-                return False
-    return False
+def user_set(f, sign):
+    column = input("Enter a COLUMN (A, B or C): ").upper()
+    while not column in ("A", "B", "C"):
+        column = input("Enter a COLUMN (A, B or C): ").upper()
+    row = input("Enter a ROW (1, 2 or 3): ")
+    while not (row in ('1', '2', '3') and row.isnumeric()):
+        row = input("Enter a ROW (1, 2 or 3): ")
+    row = int(row)
+    print()
 
+    if column == 'A':
+        column = 1
+    elif column == 'B':
+        column = 2
+    elif column == "C":
+        column = 3
+    
+    while f[row][column] == MILK_SIGN:
+        if column == 1:
+            column = 'A'
+        elif column == 2:
+            column = 'B'
+        elif column == 3:
+            column = 'C'
+        print("ALERT! OCCUPIED SPOT! NOT GOOD! TRY AGAIN!")
+        column = input("Enter a COLUMN (A, B or C): ").upper()
+        while not column in ("A", "B", "C"):
+            column = input("Enter a COLUMN (A, B or C): ").upper()
+            if column == 'A':
+                column = 1
+            elif column == 'B':
+                column = 2
+            elif column == "C":
+                column = 3
+        row = input("Enter a ROW (1, 2 or 3): ")
+        while not (row in ('1', '2', '3') and row.isnumeric()):
+            row = input("Enter a ROW (1, 2 or 3): ")
+        row = int(row)
+        if column == 'A':
+            column = 1
+        elif column == 'B':
+            column = 2
+        elif column == "C":
+            column = 3
 
-def game_turn(player, f_player):
-    if player == PLAYER_USER:
-        user_set(f_player, MILK_SIGN)
-    else:
-        machine_set(f_player, MILK_SIGN)
+        print()
+
+    if f[row][column] == BOAT_SIGN:
+        f[row][column] = HIT_SIGN
+
+        if column == 1:
+            column = 'A'
+        elif column == 2:
+            column = 'B'
+        elif column == 3:
+            column = 'C'
+
+        print("BOOM! YOU have just won!!!")
+        print_field(f, False)
+        exit()
+
+    f[row][column] = sign
+
+    return f
 
 print("User's field: ")
 f_user = field_gen()
@@ -156,19 +160,17 @@ print("*" * 15)
 
 while True:
     print("Shoot the enemy: ")
-    game_turn(PLAYER_USER, f_machine)
-
-    if not is_hit(f_machine, PLAYER_USER):
-        print("MILK! Machine's field")
-        # print_field(f_machine, True)
-        print_field(f_machine, False)
+    user_set(f_machine, MILK_SIGN)
+    print("MACHINE FIELD")
+    print_field(f_machine, True)
+    print("MILK!!!")
 
     print()
     print("Enemy shoots you: ")
-    game_turn(PLAYER_MACHINE, f_user)
+    machine_set(f_user, MILK_SIGN)
+    print("MILK!!!")
 
-    # print("Check if won: ")
-    if not is_hit(f_user, PLAYER_MACHINE):
-        print()
-        print("MILK! Your field")
-        print_field(f_user, False)
+    print()
+    print("USER FIELD")
+
+    print_field(f_user, False)
